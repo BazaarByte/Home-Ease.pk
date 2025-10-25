@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>HomeEase.pk — Your Easy Online Home Store</title>
+  <meta name="description" content="HomeEase.pk - kitchen & home products. Order via WhatsApp." />
+  <style>
+    :root{--primary:#0b66e0;--whatsapp:#25D366;--card-bg:#fff;--muted:#666}
+    *{box-sizing:border-box}
+    body{font-family:Arial,Helvetica,sans-serif;margin:0;background:#f6f7fb;color:#111;line-height:1.4}
+    /* Banner */
+    .banner{
+      width:100%;
+      height:210px;
+      background-image: linear-gradient(rgba(0,0,0,0.25), rgba(0,0,0,0.25)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1600&q=80&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#fff;
+      text-align:center;
+    }
+    .banner .title {
+      font-size:28px;
+      font-weight:700;
+      text-shadow:0 3px 10px rgba(0,0,0,0.4);
+      margin:0;
+    }
+    .banner .subtitle {
+      margin-top:6px;
+      font-size:14px;
+      opacity:0.95;
+    }
+
+    header{background:transparent;padding:0}
+    .wrap{max-width:1100px;margin:18px auto;padding:0 14px}
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:16px 0}
+    .topbar .title-left strong{font-size:18px}
+    .topbar .small{color:var(--muted);font-size:13px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px}
+    .card{background:var(--card-bg);border-radius:10px;box-shadow:0 6px 16px rgba(12,20,40,0.04);overflow:hidden;display:flex;flex-direction:column;transition:transform .18s}
+    .card:hover{transform:translateY(-6px)}
+    .card img{width:100%;height:170px;object-fit:cover;border-bottom:1px solid #eee}
+    .card-body{padding:12px;flex:1;display:flex;flex-direction:column}
+    h3{margin:6px 0;font-size:16px}
+    .desc{color:var(--muted);font-size:13px;margin:6px 0 10px;height:40px;overflow:hidden}
+    .price{font-weight:700;color:#0a8a3b;margin-bottom:8px}
+    .btn-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:auto}
+    .btn{flex:1;padding:8px 10px;border-radius:8px;border:0;color:#fff;text-decoration:none;text-align:center;cursor:pointer;font-size:14px}
+    .btn.whatsapp{background:var(--whatsapp)}
+    .btn.order{background:var(--primary)}
+    .footer-note{margin:28px 0 18px;text-align:center;color:var(--muted);font-size:13px}
+    /* Order form */
+    #orderSection{display:none;margin-top:18px;background:var(--card-bg);padding:14px;border-radius:10px;box-shadow:0 6px 16px rgba(12,20,40,0.04)}
+    form .row{display:flex;gap:10px;flex-wrap:wrap}
+    label{font-size:13px;margin-top:8px;display:block;color:#333}
+    input[type=text], input[type=tel], input[type=email], textarea, select{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:14px}
+    textarea{min-height:80px;resize:vertical}
+    .small{font-size:13px;color:var(--muted)}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .actions .btn{flex:unset;padding:10px 14px}
+    .pager{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+    .pager button{padding:8px 12px;border-radius:8px;border:1px solid #e1e1e1;background:#fff;cursor:pointer}
+    .pager button.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    @media (max-width:520px){ .card img{height:150px} .price{font-size:15px} .banner{height:160px} .banner .title{font-size:20px} }
+    footer{background:#f7f8fa;text-align:center;padding:12px;color:#666;font-size:13px;margin-top:22px}
+    .note{font-size:12px;color:#666;margin-top:8px}
+  </style>
+</head>
+<body>
+
+  <!-- Banner (scroll-away) -->
+  <div class="banner" role="banner" aria-label="HomeEase banner">
+    <div>
+      <div class="title">HomeEase.pk</div>
+      <div class="subtitle">Your Easy Online Home Store</div>
+    </div>
+  </div>
+
+  <!-- Main content -->
+  <header></header>
+  <div class="wrap">
+    <div class="topbar">
+      <div class="title-left">
+        <strong>Products — Home & Kitchen</strong>
+        <div class="small">Click "Discuss on WhatsApp" to ask, or "Order Now" to place an order.</div>
+      </div>
+      <div class="small">Contact: <strong>0300 7393754</strong> (WhatsApp)</div>
+    </div>
+
+    <!-- Products -->
+    <div id="productsGrid" class="grid" aria-live="polite"></div>
+
+    <!-- Pager -->
+    <div id="pager" class="pager" aria-label="Product pages"></div>
+
+    <!-- Order form (hidden until Order Now clicked) -->
+    <div id="orderSection" aria-hidden="true">
+      <strong style="font-size:16px">Order Form</strong>
+      <div class="small" style="margin-top:4px;margin-bottom:10px">Fill buyer details below. Address is required. After Confirm, WhatsApp will open with your order message.</div>
+
+      <form id="orderForm" onsubmit="return submitOrderForm(event)" aria-label="Order form">
+        <div class="row">
+          <div style="flex:1;min-width:180px">
+            <label>Full Name</label>
+            <input type="text" id="buyerName" placeholder="Your full name" required />
+          </div>
+          <div style="flex:1;min-width:160px">
+            <label>Mobile Number</label>
+            <input type="tel" id="buyerPhone" placeholder="03xxxxxxxxx" required />
+          </div>
+        </div>
+
+        <label>Address <span style="color:#c00">*</span></label>
+        <textarea id="buyerAddress" placeholder="Full delivery address (house, street, area, city)" required></textarea>
+
+        <div class="row" style="margin-top:8px">
+          <div style="flex:1;min-width:180px">
+            <label>Product</label>
+            <select id="orderProduct" aria-label="Select product"></select>
+          </div>
+          <div style="width:120px">
+            <label>Quantity</label>
+            <input type="text" id="orderQty" value="1" />
+          </div>
+          <div style="flex:1;min-width:180px">
+            <label>Email (optional)</label>
+            <input type="email" id="buyerEmail" placeholder="name@example.com" />
+          </div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="btn order">✅ Confirm Order & Open WhatsApp</button>
+          <button type="button" class="btn" style="background:#666" onclick="hideOrderForm()">Cancel</button>
+        </div>
+        <div id="formNote" class="small" style="margin-top:8px;color:var(--muted)"></div>
+      </form>
+    </div>
+
+    <div class="footer-note">This single file contains pagination (8 items per page). Edit product list inside the script to add or change products later.</div>
+  </div>
+
+  <footer>
+    © <span id="year"></span> HomeEase.pk — Contact: 0300 7393754
+  </footer>
+
+<script>
+/*
+  === PRODUCTS LIST (EDIT HERE) ===
+  Add or edit products in this array. Each product has: id, title, price, description, image (URL).
+  Pagination shows 8 items per page. To change page size, edit pageSize variable below.
+*/
+const products = [
+  {id:1,title:"Nonstick Frying Pan",price:"2,000",description:"Durable nonstick pan for daily cooking.",image:"https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=1200&q=80&auto=format&fit=crop"},
+  {id:2,title:"Electric Blender",price:"4,200",description:"High-speed blender for smoothies & chutneys.",image:"https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=1200&q=80&auto=format&fit=crop"},
+  {id:3,title:"Plastic Storage Box Set",price:"1,500",description:"Stackable storage boxes for kitchen.",image:"https://images.unsplash.com/photo-1556912994-6f4a2df0b7d4?w=1200&q=80&auto=format&fit=crop"},
+  {id:4,title:"Stainless Steel Kettle",price:"3,000",description:"Fast boiling stainless steel kettle.",image:"https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&q=80&auto=format&fit=crop"},
+  {id:5,title:"Dinner Plate Set (6 pcs)",price:"2,800",description:"Elegant ceramic dinner plates.",image:"https://images.unsplash.com/photo-1547592166-5b4f2fa1c5d8?w=1200&q=80&auto=format&fit=crop"},
+  {id:6,title:"Cooking Spoon Set",price:"650",description:"Heat-resistant spoons for cooking.",image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80&auto=format&fit=crop"},
+  {id:7,title:"Glass Water Jug",price:"1,200",description:"Large capacity glass jug with lid.",image:"https://images.unsplash.com/photo-1515442261605-65987759f23d?w=1200&q=80&auto=format&fit=crop"},
+  {id:8,title:"Kitchen Knife Set",price:"2,250",description:"3-piece stainless knife set.",image:"https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&q=80&auto=format&fit=crop"},
+  {id:9,title:"Nonstick Wok",price:"2,750",description:"Deep nonstick wok for stir frying.",image:"https://images.unsplash.com/photo-1588167103201-7d0f1c3c0a55?w=1200&q=80&auto=format&fit=crop"},
+  {id:10,title:"Cutting Board (Wood)",price:"900",description:"Durable wooden cutting board.",image:"https://images.unsplash.com/photo-1481833761820-0509d3217039?w=1200&q=80&auto=format&fit=crop"},
+  {id:11,title:"Microwave-Safe Bowls",price:"1,350",description:"Set of 3 microwave-safe bowls.",image:"https://images.unsplash.com/photo-1600180758890-9f5b6b9b7b18?w=1200&q=80&auto=format&fit=crop"},
+  {id:12,title:"Tea Glass Set (6)",price:"1,100",description:"Classic tea glasses for serving.",image:"https://images.unsplash.com/photo-1523986371872-9d3ba2e2f642?w=1200&q=80&auto=format&fit=crop"},
+  {id:13,title:"Silicone Baking Mat",price:"750",description:"Non-stick silicone mat for baking.",image:"https://images.unsplash.com/photo-1532634896-26909d0d3f3b?w=1200&q=80&auto=format&fit=crop"},
+  {id:14,title:"Oil Dispenser Bottle",price:"550",description:"Easy-pour oil dispenser for cooking.",image:"https://images.unsplash.com/photo-1604908177522-0a5de1a4f7c8?w=1200&q=80&auto=format&fit=crop"},
+  {id:15,title:"Thermal Lunch Box",price:"1,950",description:"Keeps food hot for hours.",image:"https://images.unsplash.com/photo-1528756514091-dee1ccf5b3c8?w=1200&q=80&auto=format&fit=crop"},
+  {id:16,title:"Dish Drying Rack",price:"1,100",description:"Sturdy rack for drying dishes.",image:"https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=1200&q=80&auto=format&fit=crop"},
+  {id:17,title:"Water Bottle (1L)",price:"450",description:"Durable reusable water bottle.",image:"https://images.unsplash.com/photo-1526406915892-8f3a6f3d4a5c?w=1200&q=80&auto=format&fit=crop"},
+  {id:18,title:"Reusable Food Wraps",price:"880",description:"Eco-friendly wraps for food storage.",image:"https://images.unsplash.com/photo-1544025162-d76694265947?w=1200&q=80&auto=format&fit=crop"},
+  {id:19,title:"Kitchen Timer",price:"350",description:"Easy-to-use kitchen timer.",image:"https://images.unsplash.com/photo-1534790566855-4cb788d389ec?w=1200&q=80&auto=format&fit=crop"},
+  {id:20,title:"Egg Cooker",price:"1,050",description:"Cook perfect eggs quickly.",image:"https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=1200&q=80&auto=format&fit=crop"},
+  {id:21,title:"Steamer Basket",price:"620",description:"Steam vegetables with ease.",image:"https://images.unsplash.com/photo-1503602642458-232111445657?w=1200&q=80&auto=format&fit=crop"},
+  {id:22,title:"Measuring Cup Set",price:"330",description:"Accurate measuring cups for baking.",image:"https://images.unsplash.com/photo-1532634896-26909d0d3f3b?w=1200&q=80&auto=format&fit=crop"},
+  {id:23,title:"Kitchen Towels (Pack)",price:"480",description:"Absorbent kitchen towels, set of 4.",image:"https://images.unsplash.com/photo-1519710164239-da123dc03ef4?w=1200&q=80&auto=format&fit=crop"},
+  {id:24,title:"Salad Spinner",price:"1,400",description:"Wash and dry salad leaves quickly.",image:"https://images.unsplash.com/photo-1551218808-94e220e084d2?w=1200&q=80&auto=format&fit=crop"}
+];
+
+// WhatsApp number (international format, without plus)
+const whatsappNumber = "923007393754";
+
+// Pagination settings
+const pageSize = 8;
+let currentPage = 1;
+const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
+
+// Render footer year
+document.getElementById('year').innerText = new Date().getFullYear();
+
+// Render products for a page
+function renderProducts(page = 1){
+  currentPage = page;
+  const grid = document.getElementById('productsGrid');
+  grid.innerHTML = '';
+  const start = (page-1)*pageSize;
+  const pageItems = products.slice(start, start + pageSize);
+  pageItems.forEach(p=>{
+    const div = document.createElement('div');
+    div.className = 'card';
+    div.innerHTML = `
+      <img src="${p.image}" alt="${escapeHtml(p.title)}" />
+      <div class="card-body">
+        <h3>${escapeHtml(p.title)}</h3>
+        <div class="desc">${escapeHtml(p.description)}</div>
+        <div class="price">₨ ${p.price}</div>
+        <div class="btn-row">
+          <a class="btn whatsapp" href="${waDiscussLink(p)}" target="_blank" rel="noopener">Discuss on WhatsApp</a>
+          <button class="btn order" onclick="openOrderForm(${p.id})">Order Now</button>
+        </div>
+      </div>
+    `;
+    grid.appendChild(div);
+  });
+  renderPager();
+}
+
+// Render pager
+function renderPager(){
+  const pager = document.getElementById('pager');
+  pager.innerHTML = '';
+  for(let i=1;i<=totalPages;i++){
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    if(i===currentPage) btn.classList.add('active');
+    btn.onclick = ()=>renderProducts(i);
+    pager.appendChild(btn);
+  }
+}
+
+// Fill product select in order form
+const orderProductSelect = document.getElementById('orderProduct');
+products.forEach(p=>{
+  const opt = document.createElement('option');
+  opt.value = p.id;
+  opt.textContent = `${p.title} — ₨ ${p.price}`;
+  orderProductSelect.appendChild(opt);
+});
+
+// Open order form and prefill product
+function openOrderForm(productId){
+  const product = products.find(x=>x.id===productId);
+  if(!product) return;
+  document.getElementById('orderSection').style.display = 'block';
+  document.getElementById('orderSection').setAttribute('aria-hidden','false');
+  orderProductSelect.value = productId;
+  setTimeout(()=>{ document.getElementById('orderSection').scrollIntoView({behavior:'smooth',block:'center'}); },150);
+}
+
+// Hide order form
+function hideOrderForm(){
+  document.getElementById('orderSection').style.display = 'none';
+  document.getElementById('orderSection').setAttribute('aria-hidden','true');
+  document.getElementById('formNote').innerText = '';
+}
+
+// Build WhatsApp discuss link
+function waDiscussLink(product){
+  const text = `Hello, I want to discuss about: ${product.title}`;
+  return `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`;
+}
+
+// Submit order form
+function submitOrderForm(e){
+  e.preventDefault();
+  const name = document.getElementById('buyerName').value.trim();
+  const phone = document.getElementById('buyerPhone').value.trim();
+  const addr = document.getElementById('buyerAddress').value.trim();
+  const prodId = document.getElementById('orderProduct').value;
+  const qty = document.getElementById('orderQty').value.trim() || '1';
+  const email = document.getElementById('buyerEmail').value.trim();
+  if(!name || !phone || !addr){ document.getElementById('formNote').innerText = 'Please fill Name, Mobile and Address (required).'; return false; }
+  const product = products.find(p=>String(p.id)===String(prodId));
+  const msgLines = [
+    'New Order from HomeEase.pk',
+    '-------------------------',
+    `Product: ${product ? product.title : prodId}`,
+    `Quantity: ${qty}`,
+    `Buyer Name: ${name}`,
+    `Mobile: ${phone}`,
+    `Address: ${addr}`,
+    email ? `Email: ${email}` : '',
+    `Time: ${new Date().toLocaleString()}`,
+    '',
+    'Please confirm delivery and price.'
+  ];
+  const message = msgLines.filter(Boolean).join('\n');
+  const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+  window.open(waUrl,'_blank');
+  document.getElementById('formNote').innerText = 'Opening WhatsApp... If WhatsApp does not open, please make sure you have internet and WhatsApp installed.';
+  setTimeout(()=>{ hideOrderForm(); },800);
+  return false;
+}
+
+// Escape HTML helper
+function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Initialize
+renderProducts(1);
+</script>
+
+</body>
+</html>
